@@ -1,0 +1,214 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 90%;
+    max-width: 600px;
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+h1 {
+    text-align: center;
+}
+.account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    position: relative;
+}
+.account span {
+    flex: 1;
+    color: #333;
+    font-weight: bold;
+    margin-right: 10px;
+}
+.account .actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.account .actions button {
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #333;
+    background: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+.account .actions button:hover {
+    color: #007bff;
+}
+.account .actions button.delete:hover {
+    color: #dc3545;
+}
+.account .actions button.copy {
+    width: 80px;
+    background-color: #dddddd;
+}
+.account .actions button.copy.copied {
+    color: #28a745;
+}
+.account .totp-display {
+    padding-right: 20px;
+}
+.account .actions button.copy.copied:hover {
+    color: #218838;
+}
+#addErrorMessage {
+    color: #f00;
+    margin-bottom: 0;
+    font-style: italic;
+    font-size: 12px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+.form-group button {
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+.form-group button:hover {
+    background: #0056b3;
+}
+.color-picker-button {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #FF5733;
+    position: relative;
+}
+.color-picker-button input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.timer {
+    font-size: 12px;
+    color: #888;
+    margin-right: 10px;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.image-upload-container {
+    margin-top: 20px;
+    text-align: center;
+}
+.image-upload-container button {
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+.image-upload-container button:hover {
+    background: #0056b3;
+}
+.image-upload-container input[type="file"] {
+    display: none;
+}
+.more-actions {
+    z-index: 1000;
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.more-actions button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.more-actions button:hover {
+    background: #f4f4f4;
+}
+.ellipsis {
+    display: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+@media (max-width: 600px) {
+    .account .non-mobile {
+        display: none;
+    }
+    .ellipsis {
+        display: block;
+        padding-left: 20px;
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "auth-ext",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "open": "^8.4.0",
+    "speakeasy": "^2.0.0"
+  },
+  "pkg": {
+    "assets": [
+      "frontend/**/*"
+    ],
+    "scripts": "./server.js",
+    "outputPath": "./binaries"
+  }
+}
