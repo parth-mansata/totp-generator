@@ -1,8 +1,17 @@
-const API_URL = 'http://localhost:3000/accounts';
+const API_URL = 'http://localhost:4567/accounts';
 
 const fetchAccounts = async () => {
     try {
-        const response = await fetch(API_URL);
+        checkForToken();
+        const token = localStorage.getItem('token');
+        const response = await fetch(API_URL, {
+            headers: {
+                token
+            }
+        });
+        if (response.status === 401) {
+            doLogout();
+        }
         const accounts = await response.json();
         renderAccounts(accounts);
     } catch (error) {
@@ -45,15 +54,16 @@ const addAccount = async () => {
     const name = document.getElementById('addName').value;
     const color = document.getElementById('addColor').value;
     const secret = document.getElementById('addSecret').value;
-    if(!name || !secret) {
+    if (!name || !secret) {
         document.getElementById('addErrorMessage').style.display = 'block';
         document.getElementById('addErrorMessage').textContent = 'Please fill required fields';
         return;
     }
+    const token = localStorage.getItem('token');
     const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, color, secret })
+        headers: {'Content-Type': 'application/json', token},
+        body: JSON.stringify({name, color, secret})
     });
     if (response.ok) {
         await fetchAccounts();
@@ -63,7 +73,9 @@ const addAccount = async () => {
         document.getElementById('addModal').style.display = 'none';
         document.getElementById('addErrorMessage').textContent = '';
 
-    } else{
+    } else if (response.status === 401) {
+        doLogout();
+    } else {
         document.getElementById('addErrorMessage').style.display = 'block';
         document.getElementById('addErrorMessage').textContent = 'Error adding account';
     }
@@ -72,16 +84,30 @@ const addAccount = async () => {
 
 const deleteAccount = async () => {
     const id = document.getElementById('deleteAccountId').value;
-    const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+            token
+        }
+    });
     if (response.ok) {
         fetchAccounts();
         document.getElementById('deleteModal').style.display = 'none';
     }
+    if (response.status === 401) {
+        doLogout();
+    }
+
 };
 
 const openEditModal = (id) => {
     document.getElementById('editModal').style.display = 'block';
-    fetch(`${API_URL}/${id}`)
+    fetch(`${API_URL}/${id}`, {
+        headers: {
+            token
+        }
+    })
         .then(response => response.json())
         .then(account => {
             console.log('account', account)
@@ -102,19 +128,32 @@ const openDeleteModal = (id) => {
 const saveChanges = async (id) => {
     const name = document.getElementById('editName').value;
     const color = document.getElementById('editColor').value;
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, color })
+        headers: {'Content-Type': 'application/json', token},
+        body: JSON.stringify({name, color})
     });
     if (response.ok) {
         fetchAccounts();
         document.getElementById('editModal').style.display = 'none';
     }
+    if (response.status === 401) {
+        doLogout();
+    }
+
 };
 
 const fetchOtp = async (id) => {
-    const response = await fetch(`${API_URL}/${id}/totp`);
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/${id}/totp`, {
+        headers: {
+            token
+        }
+    });
+    if(response.status === 401) {
+        doLogout();
+    }
     return await response.json();
 
 }
@@ -141,9 +180,6 @@ const toggleTotp = async (id) => {
 };
 
 const copyToClipboard = async (id) => {
-    const totpDiv = document.getElementById(`totp-${id}`);
-    console.log(totpDiv.style.display);
-    console.log(totpDiv.textContent);
     const account = await fetchOtp(id)
     navigator.clipboard.writeText(account.token).then(() => {
         const copyButton = document.querySelector(`#account-${id} .copy`);
