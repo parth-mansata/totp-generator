@@ -103,6 +103,7 @@ const deleteAccount = async () => {
 
 const openEditModal = (id) => {
     document.getElementById('editModal').style.display = 'block';
+    const token = localStorage.getItem('token');
     fetch(`${API_URL}/${id}`, {
         headers: {
             token
