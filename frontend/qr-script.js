@@ -21,9 +21,8 @@ domReady(function () {
         // alert("You Qr is : " + decodeText, decodeResult);
 
         document.getElementById('addSecret').input = decodeText;
-        console.log('done scanning', decodeResult, decodeText)
+        console.log('done scanning')
         const url = new URL(decodeText);
-        console.log("url", url)
 
         // Extract the query string
         const queryString = url.search;
@@ -32,12 +31,10 @@ domReady(function () {
         const urlParams = new URLSearchParams(queryString);
 
         // Get specific parameter values
-        console.log(urlParams)
         const secretFromQr = urlParams.get('secret');
         const issuer = urlParams.get('issuer');
         const labels = url.pathname.split('/');
         const labelFromQr = `${labels[labels.length - 1]} - ${issuer}`;
-        console.log('secretFromQr', secretFromQr)
         if(secretFromQr) {
             document.getElementById('addSecret').value = secretFromQr;
             document.getElementById('addName').value = labelFromQr;

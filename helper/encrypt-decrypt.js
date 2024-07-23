@@ -6,7 +6,6 @@ const iv = crypto.randomBytes(16);
 
 //Encrypting text
 const encrypt = (text) => {
-    console.log('key::', key)
     let cipher = crypto.createCipheriv(algorithm, key, iv);
     let encrypted = cipher.update(text);
     encrypted = Buffer.concat([encrypted, cipher.final()]);

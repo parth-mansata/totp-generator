@@ -33,10 +33,10 @@ const renderAccounts = (accounts) => {
           <span style="color: ${account.color}">${account.name}</span>
           <div class="totp-display" id="totp-${account.id}" style="display: none;"></div>
           <div class="actions">
-            <button class="icon copy" onclick="copyToClipboard(${account.id})">Copy</button>
-            <button class="icon non-mobile show-totp" onclick="toggleTotp(${account.id})"><i class="show-otp-i fas fa-eye"></i></button>
-            <button class="icon non-mobile delete" onclick="openDeleteModal(${account.id})"><i class="fas fa-trash"></i></button>
-            <button class="icon non-mobile edit" onclick="openEditModal(${account.id})"><i class="fas fa-pencil"></i></button>
+            <button class="icon copy" onclick="copyToClipboard('${account.id}')">Copy</button>
+            <button class="icon non-mobile show-totp" onclick="toggleTotp('${account.id}')"><i class="show-otp-i fas fa-eye"></i></button>
+            <button class="icon non-mobile delete" onclick="openDeleteModal('${account.id}')"><i class="fas fa-trash"></i></button>
+            <button class="icon non-mobile edit" onclick="openEditModal('${account.id}')"><i class="fas fa-pencil"></i></button>
           </div>
           <div class="ellipsis" onclick="toggleMoreActions(${account.id})">...</div>
           <div class="more-actions" id="more-actions-${account.id}">
@@ -111,7 +111,6 @@ const openEditModal = (id) => {
     })
         .then(response => response.json())
         .then(account => {
-            console.log('account', account)
             document.getElementById('editName').value = account.name;
             document.getElementById('editColor').value = account.color;
             document.getElementById('editColorButton').style.backgroundColor = account.color;

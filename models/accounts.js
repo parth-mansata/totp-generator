@@ -18,15 +18,6 @@ const accountSchema = new Schema({
 
 }, {timestamps: true});
 
-accountSchema.method('toClient', function() {
-    var obj = this.toObject();
-    //Rename fields
 
-    obj.id = obj._id;
-    delete obj._id;
-    console.log('method called', obj)
-
-    return obj;
-});
 // Compile model from schema
 module.exports = mongoose.model("account", accountSchema);
