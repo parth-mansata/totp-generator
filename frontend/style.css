@@ -20,9 +20,9 @@ body {
 h1 {
     text-align: center;
 }
-.accounts {
+#accounts {
     overflow-y: auto;
-    height: calc(100% - 160px);
+    height: calc(100% - 130px);
 }
 .account {
     display: flex;
