@@ -38,11 +38,11 @@ const renderAccounts = (accounts) => {
             <button class="icon non-mobile delete" onclick="openDeleteModal('${account.id}')"><i class="fas fa-trash"></i></button>
             <button class="icon non-mobile edit" onclick="openEditModal('${account.id}')"><i class="fas fa-pencil"></i></button>
           </div>
-          <div class="ellipsis" onclick="toggleMoreActions(${account.id})">...</div>
+          <div class="ellipsis" onclick="toggleMoreActions('${account.id}')">...</div>
           <div class="more-actions" id="more-actions-${account.id}">
-            <button onclick="toggleTotp(${account.id})">Show/Hide</button>
-            <button onclick="openEditModal(${account.id})">Edit</button>
-            <button onclick="openDeleteModal(${account.id})">Delete</button>
+            <button onclick="toggleMoreActions('${account.id}'); toggleTotp('${account.id}')">Show/Hide</button>
+            <button onclick="toggleMoreActions('${account.id}'); openEditModal('${account.id}')">Edit</button>
+            <button onclick="toggleMoreActions('${account.id}'); openDeleteModal('${account.id}')">Delete</button>
           </div>
           <div class="timer" id="timer-${account.id}"></div>
         `;

@@ -270,8 +270,10 @@ button {
     border: none;
     border-radius: 5px;
     background: #5cb85c;
-    color: white;
     cursor: pointer;
+}
+#logout {
+    color: white;
 }
 
 button:hover {
