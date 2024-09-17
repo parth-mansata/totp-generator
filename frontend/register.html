@@ -19,14 +19,15 @@
     </form>
 </div>
 <script>
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        const response = await fetch('http://localhost:4567/auth/register', {
+        const API_URL = 'http://localhost:4567/auth/register';
+        const response = await fetch(API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password})
         });
 
         const result = await response.json();
