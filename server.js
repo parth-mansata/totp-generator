@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-// const open = require('open');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -32,7 +31,7 @@ app.listen(PORT, async () => {
 
 const connectDb = async () => {
     try {
-        const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/auth-ext';
+        const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/auth-ext';
         await mongoose.connect(DB_URL);
         console.log('DB connected successfully.');
     } catch (e) {
