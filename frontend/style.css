@@ -293,3 +293,35 @@ button:hover {
 .btn:hover {
     background: #4cae4c;
 }
+
+.timer-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .circle-timer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+  }
+  
+  .countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: #000;
+  }
+  
+  @keyframes countdown-animation {
+    from {
+      stroke-dashoffset: 113;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  

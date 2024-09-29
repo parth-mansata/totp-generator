@@ -30,25 +30,34 @@ const renderAccounts = (accounts) => {
         accountDiv.className = 'account';
         accountDiv.id = `account-${account.id}`;
         accountDiv.innerHTML = `
-          <span style="color: ${account.color}">${account.name}</span>
-          <div class="totp-display" id="totp-${account.id}" style="display: none;"></div>
-          <div class="actions">
-            <button class="icon copy" onclick="copyToClipboard('${account.id}')">Copy</button>
-            <button class="icon non-mobile show-totp" onclick="toggleTotp('${account.id}')"><i class="show-otp-i fas fa-eye"></i></button>
-            <button class="icon non-mobile delete" onclick="openDeleteModal('${account.id}')"><i class="fas fa-trash"></i></button>
-            <button class="icon non-mobile edit" onclick="openEditModal('${account.id}')"><i class="fas fa-pencil"></i></button>
+        <span style="color: ${account.color}">${account.name}</span>
+        <div class="totp-display" id="totp-${account.id}" style="display: none;"></div>
+        <div class="actions">
+          <div class="timer-container">
+            <svg class="circle-timer" width="40" height="40">
+              <circle cx="20" cy="20" r="18" stroke="#3498db" stroke-width="4" fill="none" />
+            </svg>
+            <span class= "countdown" id="countdown-${account.id}">29</span> <!-- Correct span for countdown -->
           </div>
-          <div class="ellipsis" onclick="toggleMoreActions('${account.id}')">...</div>
-          <div class="more-actions" id="more-actions-${account.id}">
-            <button onclick="toggleMoreActions('${account.id}'); toggleTotp('${account.id}')">Show/Hide</button>
-            <button onclick="toggleMoreActions('${account.id}'); openEditModal('${account.id}')">Edit</button>
-            <button onclick="toggleMoreActions('${account.id}'); openDeleteModal('${account.id}')">Delete</button>
-          </div>
-          <div class="timer" id="timer-${account.id}"></div>
-        `;
+          <button class="icon copy" onclick="copyToClipboard('${account.id}')">Copy</button>
+          <button class="icon non-mobile show-totp" onclick="toggleTotp('${account.id}')"><i class="show-otp-i fas fa-eye"></i></button>
+          <button class="icon non-mobile delete" onclick="openDeleteModal('${account.id}')"><i class="fas fa-trash"></i></button>
+          <button class="icon non-mobile edit" onclick="openEditModal('${account.id}')"><i class="fas fa-pencil"></i></button>
+        </div>
+        <div class="ellipsis" onclick="toggleMoreActions('${account.id}')">...</div>
+        <div class="more-actions" id="more-actions-${account.id}">
+          <button onclick="toggleMoreActions('${account.id}'); toggleTotp('${account.id}')">Show/Hide</button>
+          <button onclick="toggleMoreActions('${account.id}'); openEditModal('${account.id}')">Edit</button>
+          <button onclick="toggleMoreActions('${account.id}'); openDeleteModal('${account.id}')">Delete</button>
+        </div>
+        <div class="timer" id="timer-${account.id}"></div>
+      `;
+        
         accountsDiv.appendChild(accountDiv);
+        initTimer(account.id);
     });
 };
+
 
 const addAccount = async () => {
     const name = document.getElementById('addName').value;
@@ -215,3 +224,32 @@ document.getElementById('editColorButton').onclick = () => {
 document.getElementById('editColor').oninput = (event) => {
     document.getElementById('editColorButton').style.backgroundColor = event.target.value;
 };
+
+const initTimer = (accountId) => {
+    const countdownElement = document.getElementById(`countdown-${accountId}`);
+    const circle = document.querySelector(`#account-${accountId} .circle-timer circle`); // Ensure correct selector
+
+    const radius = circle.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius;
+
+    circle.style.strokeDasharray = circumference;
+    circle.style.strokeDashoffset = circumference;
+
+    const totalTime = 29;
+
+    function updateTimer() {
+        const now = new Date();
+        const secondsElapsed = now.getSeconds() % totalTime; 
+        const remainingTime = totalTime - secondsElapsed; 
+
+        countdownElement.textContent = remainingTime;
+
+        const offset = circumference - (remainingTime / totalTime) * circumference;
+        circle.style.strokeDashoffset = offset;
+
+       
+        setTimeout(updateTimer, 1000);
+    }
+
+    updateTimer(); 
+}
