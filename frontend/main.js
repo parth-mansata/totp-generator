@@ -235,21 +235,34 @@ const initTimer = (accountId) => {
     circle.style.strokeDasharray = circumference;
     circle.style.strokeDashoffset = circumference;
 
-    const totalTime = 29;
+    const totalTime = 29; // Total time for the countdown in seconds
 
-    function updateTimer() {
+    function getRemainingTime() {
         const now = new Date();
-        const secondsElapsed = now.getSeconds() % totalTime; 
-        const remainingTime = totalTime - secondsElapsed; 
-
-        countdownElement.textContent = remainingTime;
-
-        const offset = circumference - (remainingTime / totalTime) * circumference;
-        circle.style.strokeDashoffset = offset;
-
-       
-        setTimeout(updateTimer, 1000);
+        const currentSecond = now.getSeconds(); // Get current second of the minute
+        const milliseconds = now.getMilliseconds(); // Get current milliseconds
+        const remainingTime = totalTime - (currentSecond % 30); // 1st or 31st second gives 29, 30th or 0 gives 0
+        const fractionalSecond = (1000 - milliseconds) / 1000; // Fractional part of the current second
+        return remainingTime + fractionalSecond; // Add fractional second to make it smooth
     }
 
-    updateTimer(); 
+    function updateSeconds() {
+        const remainingTime = Math.floor(getRemainingTime()); // Round down to nearest second
+        countdownElement.textContent = remainingTime; // Update the countdown display
+
+        setTimeout(updateSeconds, 1000); // Update every second
+    }
+
+    function updateCircle() {
+        const remainingTime = getRemainingTime(); // Get the remaining time including fractional part
+        const progress = remainingTime / totalTime; // Progress as a fraction (0 to 1)
+
+        const offset = circumference * (1 - progress); // Reverse offset calculation to decrease
+        circle.style.strokeDashoffset = offset;
+
+        setTimeout(updateCircle, 100); // Update every 100ms for smooth progress
+    }
+
+    updateSeconds();
+    updateCircle();
 }
