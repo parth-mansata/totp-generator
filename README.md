@@ -95,7 +95,3 @@ Contributions are welcome!
 
 ## 📜 License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
----
-
-Now you can copy and paste this markdown file into your GitHub repository, and it will include the emojis as well. Let me know if you need any more adjustments! 😊
