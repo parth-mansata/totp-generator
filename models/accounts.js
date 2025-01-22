@@ -14,8 +14,11 @@ const accountSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         ref: "User"
+    },
+    position: {
+        type: Number,
+        default: 0
     }
-
 }, {timestamps: true});
 
 

@@ -1,10 +1,15 @@
-const API_URL = 'http://localhost:4567/accounts';
+const API_URL = 'http://localhost:4567';
+const ACCOUNTS_URL = `${API_URL}/accounts`;
+
+const isMobileDevice = () => {
+    return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+};
 
 const fetchAccounts = async () => {
     try {
         checkForToken();
         const token = localStorage.getItem('token');
-        const response = await fetch(API_URL, {
+        const response = await fetch(ACCOUNTS_URL, {
             headers: {
                 token
             }
@@ -18,26 +23,38 @@ const fetchAccounts = async () => {
         console.error('Error fetching accounts:', error);
     }
 };
+
 const toggleMoreActions = (id) => {
     const moreActions = document.getElementById(`more-actions-${id}`);
     moreActions.style.display = moreActions.style.display === 'block' ? 'none' : 'block';
 };
+
 const renderAccounts = (accounts) => {
     const accountsDiv = document.getElementById('accounts');
     accountsDiv.innerHTML = '';
-    accounts.forEach(account => {
+    accounts.forEach((account, index) => {
         const accountDiv = document.createElement('div');
         accountDiv.className = 'account';
         accountDiv.id = `account-${account.id}`;
+        accountDiv.setAttribute('draggable', true);
+        accountDiv.setAttribute('data-index', index); // Track original order
+
+        addDragAndTouchListeners(accountDiv, account.id);
+
         accountDiv.innerHTML = `
-        <span style="color: ${account.color}">${account.name}</span>
-        <div class="totp-display" id="totp-${account.id}" style="display: none;"></div>
+            <span 
+                class="draggable-name" 
+                style="color: ${account.color}; line-break: anywhere"
+            >
+                ${account.name}
+            </span>
+            <div class="totp-display" id="totp-${account.id}" style="display: none;"></div>
         <div class="actions">
           <div class="timer-container">
             <svg class="circle-timer" width="40" height="40">
               <circle cx="20" cy="20" r="18" stroke="#3498db" stroke-width="4" fill="none" />
             </svg>
-            <span class= "countdown" id="countdown-${account.id}">29</span> <!-- Correct span for countdown -->
+            <span class= "countdown" id="countdown-${account.id}">29</span>
           </div>
           <button class="icon copy" onclick="copyToClipboard('${account.id}')">Copy</button>
           <button class="icon non-mobile show-totp" onclick="toggleTotp('${account.id}')"><i class="show-otp-i fas fa-eye"></i></button>
@@ -52,7 +69,7 @@ const renderAccounts = (accounts) => {
         </div>
         <div class="timer" id="timer-${account.id}"></div>
       `;
-        
+
         accountsDiv.appendChild(accountDiv);
         initTimer(account.id);
     });
@@ -69,7 +86,7 @@ const addAccount = async () => {
         return;
     }
     const token = localStorage.getItem('token');
-    const response = await fetch(API_URL, {
+    const response = await fetch(ACCOUNTS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', token},
         body: JSON.stringify({name, color, secret})
@@ -94,7 +111,7 @@ const addAccount = async () => {
 const deleteAccount = async () => {
     const id = document.getElementById('deleteAccountId').value;
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`${ACCOUNTS_URL}/${id}`, {
         method: 'DELETE',
         headers: {
             token
@@ -113,7 +130,7 @@ const deleteAccount = async () => {
 const openEditModal = (id) => {
     document.getElementById('editModal').style.display = 'block';
     const token = localStorage.getItem('token');
-    fetch(`${API_URL}/${id}`, {
+    fetch(`${ACCOUNTS_URL}/${id}`, {
         headers: {
             token
         }
@@ -138,7 +155,7 @@ const saveChanges = async (id) => {
     const name = document.getElementById('editName').value;
     const color = document.getElementById('editColor').value;
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`${ACCOUNTS_URL}/${id}`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json', token},
         body: JSON.stringify({name, color})
@@ -155,12 +172,12 @@ const saveChanges = async (id) => {
 
 const fetchOtp = async (id) => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/${id}/totp`, {
+    const response = await fetch(`${ACCOUNTS_URL}/${id}/totp`, {
         headers: {
             token
         }
     });
-    if(response.status === 401) {
+    if (response.status === 401) {
         doLogout();
     }
     return await response.json();
@@ -202,29 +219,31 @@ const copyToClipboard = async (id) => {
 };
 
 
-document.getElementById('addAccount').addEventListener('click', openAddModal);
-document.getElementById('closeDeleteModalNo').addEventListener('click', () => document.getElementById('deleteModal').style.display = 'none');
+if (window.location.href.includes('index')) {
+    console.log('index html set')
+    document.getElementById('addAccount').addEventListener('click', openAddModal);
+    document.getElementById('closeDeleteModalNo').addEventListener('click', () => document.getElementById('deleteModal').style.display = 'none');
 
 // Modal functionality
-document.getElementById('closeModal').onclick = () => document.getElementById('editModal').style.display = 'none';
-document.getElementById('closeDeleteModal').onclick = () => document.getElementById('deleteModal').style.display = 'none';
-document.getElementById('addCloseModal').onclick = () => document.getElementById('addModal').style.display = 'none';
-document.getElementById('closeUploadModal').onclick = () => document.getElementById('uploadModal').style.display = 'none';
-document.getElementById('openUploadModal').onclick = () => document.getElementById('uploadModal').style.display = 'block';
+    document.getElementById('closeModal').onclick = () => document.getElementById('editModal').style.display = 'none';
+    document.getElementById('closeDeleteModal').onclick = () => document.getElementById('deleteModal').style.display = 'none';
+    document.getElementById('addCloseModal').onclick = () => document.getElementById('addModal').style.display = 'none';
+    document.getElementById('closeUploadModal').onclick = () => document.getElementById('uploadModal').style.display = 'none';
+    document.getElementById('openUploadModal').onclick = () => document.getElementById('uploadModal').style.display = 'block';
 
-document.getElementById('addColorButton').onclick = () => {
-    document.getElementById('addColor').click();
-};
-document.getElementById('addColor').oninput = (event) => {
-    document.getElementById('addColorButton').style.backgroundColor = event.target.value;
-};
-document.getElementById('editColorButton').onclick = () => {
-    document.getElementById('editColor').click();
-};
-document.getElementById('editColor').oninput = (event) => {
-    document.getElementById('editColorButton').style.backgroundColor = event.target.value;
-};
-
+    document.getElementById('addColorButton').onclick = () => {
+        document.getElementById('addColor').click();
+    };
+    document.getElementById('addColor').oninput = (event) => {
+        document.getElementById('addColorButton').style.backgroundColor = event.target.value;
+    };
+    document.getElementById('editColorButton').onclick = () => {
+        document.getElementById('editColor').click();
+    };
+    document.getElementById('editColor').oninput = (event) => {
+        document.getElementById('editColorButton').style.backgroundColor = event.target.value;
+    };
+}
 const initTimer = (accountId) => {
     const countdownElement = document.getElementById(`countdown-${accountId}`);
     const circle = document.querySelector(`#account-${accountId} .circle-timer circle`); // Ensure correct selector
@@ -265,4 +284,75 @@ const initTimer = (accountId) => {
 
     updateSeconds();
     updateCircle();
+}
+
+
+let draggedElement = null;
+
+const addDragAndTouchListeners = (accountDiv, accountId) => {
+    if (!isMobileDevice()) {
+        accountDiv.ondragstart = (event) => onDragStart(event, accountId);
+        accountDiv.ondragover = (event) => event.preventDefault();
+        accountDiv.ondrop = (event) => onDrop(event, accountId);
+    } else {
+        // Disable drag-and-drop on mobile
+        accountDiv.ontouchstart = null;
+        accountDiv.ontouchmove = null;
+        accountDiv.ontouchend = null;
+    }
+};
+
+const onDragStart = (event, accountId) => {
+    draggedElement = document.getElementById(`account-${accountId}`);
+    event.dataTransfer.effectAllowed = 'move';
+};
+
+const onDrop = (event, targetAccountId) => {
+    event.preventDefault();
+
+    const targetElement = document.getElementById(`account-${targetAccountId}`);
+    const parent = document.getElementById('accounts');
+
+    parent.insertBefore(draggedElement, targetElement.nextSibling);
+    updateAccountOrder();
+};
+
+const updateAccountOrder = async () => {
+    try {
+
+        const accountsDiv = document.getElementById('accounts');
+        const accountIds = Array.from(accountsDiv.children).map((child) =>
+            child.id.replace('account-', '')
+        );
+        console.log({order: accountIds});
+
+        await fetch(`${ACCOUNTS_URL}/reorder`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', token: localStorage.getItem('token')},
+            body: JSON.stringify({order: accountIds}),
+        })
+    } catch (error) {
+        console.error('Error updating order:', error)
+        alert('Error updating order')
+    }
+};
+
+// console.log({ order: accountIds })
+
+
+const doLogin = async (email, password) => {
+    return await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, password})
+    });
+
+}
+const doRegister = async (email, password) => {
+    return await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, password})
+    });
+
 }
